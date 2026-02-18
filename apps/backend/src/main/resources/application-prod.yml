@@ -1,0 +1,30 @@
+spring:
+  # OAuth2: 운영에서는 placeholder 없이 환경변수 필수
+  # 미설정 시 Spring Boot가 기동 실패 (fail-fast)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+  jpa:
+    show-sql: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+
+logging:
+  level:
+    com.arcstride: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.security: WARN
+
+# OpenAPI: prod에서 Swagger UI 비활성화 (JSON 스펙은 유지)
+springdoc:
+  swagger-ui:
+    enabled: false

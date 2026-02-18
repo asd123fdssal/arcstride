@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS title_tags;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS title_aliases;
 DROP TABLE IF EXISTS titles;
+DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -33,7 +34,8 @@ CREATE TABLE users (
   user_id BIGINT NOT NULL AUTO_INCREMENT,
   username VARCHAR(50) NOT NULL,
   email VARCHAR(100) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NULL,
+  google_sub VARCHAR(255) NULL,
   profile_picture_url TEXT NULL,
   role VARCHAR(20) NOT NULL DEFAULT 'USER',
   status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
@@ -42,7 +44,23 @@ CREATE TABLE users (
   PRIMARY KEY (user_id),
   UNIQUE KEY uk_users_username (username),
   UNIQUE KEY uk_users_email (email),
+  UNIQUE KEY uk_users_google_sub (google_sub),
   KEY ix_users_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =========================================================
+-- 1.5) refresh_tokens (JWT refresh 토큰 저장)
+-- =========================================================
+CREATE TABLE refresh_tokens (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_refresh_token (token),
+  KEY ix_refresh_user (user_id),
+  CONSTRAINT fk_refresh_user FOREIGN KEY (user_id)
+    REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================================================
